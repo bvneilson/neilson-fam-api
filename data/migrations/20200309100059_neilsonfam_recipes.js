@@ -1,6 +1,6 @@
 
 exports.up = function(knex) {
-  knex.schema
+  return knex.schema
   .createTable('users', tbl => {
     tbl.increments();
     tbl.text('username', 128)
@@ -14,7 +14,9 @@ exports.up = function(knex) {
     tbl.text('name', 128)
       .notNullable();
     tbl.text('description', 128);
-    tbl.specificType('directions', 'string ARRAY')
+    tbl.specificType('directions', 'text ARRAY')
+      .notNullable();
+    tbl.specificType('ingredients', 'text ARRAY')
       .notNullable();
     tbl.text('added_by', 128)
       .notNullable();
@@ -24,7 +26,7 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-  knex.schema
+  return knex.schema
   .dropTableIfExists('recipes')
   .dropTableIfExists('users');
 };

@@ -1,11 +1,11 @@
+require('dotenv').config();
+
 module.exports = {
 
   development: {
-    client: 'sqlite3',
+    client: 'pg',
     useNullAsDefault: true,
-    connection: {
-      filename: './data/neilson-fam-api.db3'
-    },
+    connection: process.env.DATABASE_URL,
     migrations: {
       directory: './data/migrations'
     },
