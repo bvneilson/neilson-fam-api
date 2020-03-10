@@ -18,8 +18,13 @@ exports.up = function(knex) {
       .notNullable();
     tbl.specificType('ingredients', 'text ARRAY')
       .notNullable();
-    tbl.text('added_by', 128)
-      .notNullable();
+      tbl.integer('user_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
     tbl.integer('prep_time', 128);
     tbl.integer('cook_time', 128);
   })
