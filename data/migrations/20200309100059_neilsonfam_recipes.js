@@ -8,6 +8,9 @@ exports.up = function(knex) {
       .unique();
     tbl.text('password', 128)
       .notNullable();
+    tbl.text('first_name', 128);
+    tbl.text('last_name', 128);
+    tbl.text('profile_photo_url', 128);
   })
   .createTable('recipes', tbl => {
     tbl.increments();
@@ -27,6 +30,7 @@ exports.up = function(knex) {
         .onUpdate('CASCADE');
     tbl.integer('prep_time', 128);
     tbl.integer('cook_time', 128);
+    tbl.specificType('photo_urls', 'text ARRAY');
   })
 };
 
