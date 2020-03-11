@@ -10,9 +10,9 @@ const server = express();
 server.use(express.json());
 server.use(helmet());
 server.use(cors());
+server.use(expressfileupload());
 server.use('/api/users', userRoutes);
 server.use('/api/recipes', recipeRoutes);
-server.use(expressfileupload());
 
 server.get('/', (req, res) => {
   res.send('Welcome to the Neilson fam api');

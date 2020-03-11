@@ -117,13 +117,12 @@ router.delete('/:id', restricted, (req, res) => {
 });
 
 router.post('/uploadprofpic', (req, res) => {
-  var filePath = req.body.image;
-  console.log(req.files);
+  console.log(req.files.profpic);
   //configuring parameters
   var params = {
-    Bucket: 'neilsoncookbook',
-    Body : req.body.image,
-    Key : "profile-pictures/"
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Body : req.files.profpic.data,
+    Key : `profile-pictures/${req.files.profpic.name}`
   };
 
   s3.upload(params, (err, data) => {
@@ -134,7 +133,7 @@ router.post('/uploadprofpic', (req, res) => {
 
     //success
     if (data) {
-      console.log("Uploaded in:", data.Location);
+      console.log("Uploaded in:", data);
       res.status(200).json({message: 'Success!!!', location: data.Location})
     }
   });
