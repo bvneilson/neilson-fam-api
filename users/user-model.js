@@ -9,15 +9,15 @@ function login(user) {
 }
 
 function getUserById(id) {
-  return db('users').where({id: id}).select('id', 'username');
+  return db('users').where({id: id}).select('id', 'username', 'first_name', 'last_name', 'profile_photo_url');
 }
 
 function getUserByUsername(username) {
-  return db('users').where({username: username}).select('id', 'username');
+  return db('users').where({username: username}).select('id', 'username', 'first_name', 'last_name', 'profile_photo_url');
 }
 
 function getUsers() {
-  return db('users').select('id', 'username');
+  return db('users').select('id', 'username', 'first_name', 'last_name', 'profile_photo_url');
 }
 
 function deleteUser(id) {

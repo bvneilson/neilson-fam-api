@@ -4,8 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 // Load the AWS SDK for Node.js
 const aws = require('aws-sdk');
-const path = require('path');
-const fs = require('fs');
 
 const secret = process.env.JWT_SECRET;
 const router = express.Router();
@@ -23,20 +21,55 @@ router.post('/register', userValidation, (req, res) => {
   const newUser = req.body;
   const hash = bcrypt.hashSync(newUser.password, 8);
   newUser.password = hash;
+  if (!newUser.first_name) {
+    newUser.first_name = '';
+  }
+  if (!newUser.last_name) {
+    newUser.last_name = '';
+  }
+  if (!newUser.profile_photo_url) {
+    newUser.profile_photo_url = 'https://neilsoncookbook.s3-us-west-1.amazonaws.com/profile-pictures/default.png';
+  }
 
-  db.register(newUser).then(response => {
-    db.getUserByUsername(newUser.username).first().then(user => {
-      const token = generateToken(user);
-      res.status(201).json({
-        message: `User successfully created. Welcome, ${user.username}! Here is your token...`,
-        token
-      });
+  function uploadprofpic(params, newUser) {
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        res.send("Error", err);
+      }
+      if (data) {
+        newUser.profile_photo_url = data.Location;
+        registerTheUser(newUser);
+      }
+    });
+  }
+
+  function registerTheUser(newUser) {
+    db.register(newUser).then(response => {
+      db.getUserByUsername(newUser.username).first().then(user => {
+        const token = generateToken(user);
+        res.status(201).json({
+          message: `User successfully created. Welcome, ${user.username}! Here is your token...`,
+          token,
+          user
+        });
+      }).catch(err => {
+        res.status(400).json({message: "Error during user creation", error: err});
+      })
     }).catch(err => {
-      res.status(400).json({message: "Error during user creation", error: err});
+      res.status(500).json({message: "Could not register user", error: err});
     })
-  }).catch(err => {
-    res.status(500).json({message: "Could not register user", error: err});
-  })
+  }
+
+  if (req.files) {
+    var params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Body : req.files.profpic.data,
+      Key : `profile-pictures/${req.files.profpic.name}`
+    };
+    uploadprofpic(params, newUser);
+  } else {
+    registerTheUser(newUser);
+  }
 })
 
 router.post('/login', userValidation, (req, res) => {
@@ -155,6 +188,10 @@ function generateToken(user) {
 // Custom Middleware
 
 function userValidation(req, res, next) {
+  if(req.body.data) {
+    req.body = JSON.parse(req.body.data);
+  }
+  //console.log(JSON.parse(req.body.data));
   if (!req.body.username) {
     res.send("Username is required");
   } else if (!req.body.password) {

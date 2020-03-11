@@ -7,9 +7,9 @@ exports.seed = function(knex) {
     .then(function () {
       // Inserts seed entries
       return knex('users').insert([
-        {username: 'test1', password: hash},
-        {username: 'test2', password: hash},
-        {username: 'test3', password: hash}
+        {username: 'test1', password: hash, first_name: 'Test', last_name: 'Test', profile_photo_url: 'https://neilsoncookbook.s3-us-west-1.amazonaws.com/profile-pictures/Photo+on+12-11-19+at+7.12+PM.jpg'},
+        {username: 'test2', password: hash, first_name: 'Test', last_name: 'Test', profile_photo_url: 'https://neilsoncookbook.s3-us-west-1.amazonaws.com/profile-pictures/Photo+on+12-11-19+at+7.12+PM.jpg'},
+        {username: 'test3', password: hash, first_name: 'Test', last_name: 'Test', profile_photo_url: 'https://neilsoncookbook.s3-us-west-1.amazonaws.com/profile-pictures/Photo+on+12-11-19+at+7.12+PM.jpg'}
       ]);
     });
 };
