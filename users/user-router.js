@@ -149,9 +149,7 @@ router.delete('/:id', restricted, (req, res) => {
   })
 });
 
-router.post('/uploadprofpic', (req, res) => {
-  console.log(req.files.profpic);
-  //configuring parameters
+router.post('/uploadprofpic', restricted, (req, res) => {
   var params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Body : req.files.profpic.data,
@@ -159,14 +157,10 @@ router.post('/uploadprofpic', (req, res) => {
   };
 
   s3.upload(params, (err, data) => {
-    //handle error
     if (err) {
       console.log("Error", err);
     }
-
-    //success
     if (data) {
-      console.log("Uploaded in:", data);
       res.status(200).json({message: 'Success!!!', location: data.Location})
     }
   });
