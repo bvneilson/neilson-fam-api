@@ -13,7 +13,7 @@ function findRecipesByName(name) {
 }
 
 function getRecipes() {
-  return db('recipes');
+  return db('recipes').select('recipes.*', 'users.username', 'users.first_name', 'users.last_name', 'users.profile_photo_url').join('users', {'recipes.user_id': 'users.id'});
 }
 
 function updateRecipe(id, recipe) {
